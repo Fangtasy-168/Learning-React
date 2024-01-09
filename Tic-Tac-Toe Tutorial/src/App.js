@@ -14,11 +14,19 @@ function Square({ value, onSquareClick }) {
 
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null)) // initialize squares to equal and array of 9 nulls
+  const [xIsNext, setXIsNext] = useState(true) // initialized xIsNext as true
 
   function handleClick(i) {
+    if (squares[i]) {
+      return;
+    }
     const nextSquares = squares.slice() // created a copy to modify to keep immuntability because when a parents state changes all children update
     nextSquares[i] = 'X'
+
+    xIsNext ? nextSquares[i] = 'X' : nextSquares[i] = 'O'
+
     setSquares(nextSquares)
+    setXIsNext(!xIsNext)
   }
 
 
