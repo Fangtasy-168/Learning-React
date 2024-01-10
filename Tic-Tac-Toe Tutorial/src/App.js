@@ -42,6 +42,7 @@ export default function Board() {
   /* passing the squares state as a prop down to the component so it knows what to render. Also passing the function handleClick as a props */
   return (
     <>
+      <div className="status">{status}</div>
       <div className='board-row'>
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
