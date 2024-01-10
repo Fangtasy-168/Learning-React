@@ -17,7 +17,7 @@ export default function Board() {
   const [xIsNext, setXIsNext] = useState(true) // initialized xIsNext as true
 
   function handleClick(i) {
-    if (squares[i]) {
+    if (squares[i] || calculateWinner(squares)) { // checks if square clicked already has a value or if there is already a winner
       return;
     }
     const nextSquares = squares.slice() // created a copy to modify to keep immuntability to keep previous data of turns intact for later usuage
@@ -27,6 +27,15 @@ export default function Board() {
 
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
+  }
+
+  // Function to declare current turn of the game or winner if game ended
+  const winner = calculateWinner(squares) // refer to the function to see the value it returns (should be "X" or "O")
+  let status
+  if (winner) {
+    status = "Winner: " + winner
+  } else {
+    status = "Next player: " + (xIsNext ? "X" : "O")
   }
 
 
@@ -51,4 +60,26 @@ export default function Board() {
       </div>
     </>
   )
+}
+
+//Function that determines if there is winner by checking for 3 consecutive inputs of the same value (X or O)
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2], // Three in top row
+    [3, 4, 5], // Three in middle row
+    [6, 7, 8], // Three in bottom row
+    [0, 3, 6], // Three in left column
+    [1, 4, 7], // Three in middle column
+    [2, 5, 8], // Three in right column
+    [0, 4, 8], // Three Diagonal from top left to bottom right
+    [2, 4, 6], // Three Diagonal from top right to bottom left
+  ]
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i]
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) { // Check if first box is a value, then checks if the following boxes indicated by the index is of the same value
+      return squares[a]
+    } else {
+      return null
+    }
+  }
 }
