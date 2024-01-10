@@ -12,9 +12,7 @@ function Square({ value, onSquareClick }) {
   )
 }
 
-export default function Board() {
-  const [squares, setSquares] = useState(Array(9).fill(null)) // initialize squares to equal and array of 9 nulls
-  const [xIsNext, setXIsNext] = useState(true) // initialized xIsNext as true
+function Board({ xIsNext, squares, onPlay }) { // added the properties the function can accept
 
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) { // checks if square clicked already has a value or if there is already a winner
@@ -25,8 +23,7 @@ export default function Board() {
 
     xIsNext ? nextSquares[i] = 'X' : nextSquares[i] = 'O'
 
-    setSquares(nextSquares)
-    setXIsNext(!xIsNext)
+    onPlay(nextSquares)
   }
 
   // Function to declare current turn of the game or winner if game ended
@@ -62,6 +59,50 @@ export default function Board() {
     </>
   )
 }
+export default function Game() {
+  const [xIsNext, setXIsNext] = useState(true) // initialized xIsNext as true
+  const [history, setHistory] = useState([Array(9).fill(null)]) // Operates similar to our previous initalization of squares with an array of 9 filled with nulls but with this its an array of 9 nested in an array
+  const [currentMove, setCurrentMove] = useState(0)
+  const currentSquares = history[currentMove] // current or currently selected move will be displayed
+
+
+  function handleplay(nextSquares) {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares] // copies the history up to a current point in case a person makes a new move after backtracking
+    setHistory(nextHistory)
+    setCurrentMove = (nextHistory.length - 1)
+    setXIsNext(!xIsNext) // boolean to determine turns
+  }
+
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove)
+    setXIsNext(nextMove % 2 === 0)
+  }
+
+  const moves = history.map((squares, move) => {
+    let description
+    if (move > 0) {
+      description = 'Go to move #' + move
+    } else {
+      description = 'Go to game start'
+    }
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    )
+  })
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handleplay} />
+      </div>
+      <div className="game-info">
+        <ol>{moves}</ol>
+      </div>
+    </div>
+  )
+}
 
 //Function that determines if there is winner by checking for 3 consecutive inputs of the same value (X or O)
 function calculateWinner(squares) {
@@ -79,8 +120,9 @@ function calculateWinner(squares) {
     const [a, b, c] = lines[i]
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) { // Check if first box is a value, then checks if the following boxes indicated by the index is of the same value
       return squares[a]
-    } else {
-      return null
     }
+
   }
+  return null // made a mistake in the previous function
 }
+
