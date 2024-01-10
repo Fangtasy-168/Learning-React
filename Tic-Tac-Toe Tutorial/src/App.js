@@ -20,7 +20,7 @@ export default function Board() {
     if (squares[i]) {
       return;
     }
-    const nextSquares = squares.slice() // created a copy to modify to keep immuntability because when a parents state changes all children update
+    const nextSquares = squares.slice() // created a copy to modify to keep immuntability to keep previous data of turns intact for later usuage
     nextSquares[i] = 'X'
 
     xIsNext ? nextSquares[i] = 'X' : nextSquares[i] = 'O'
