@@ -60,22 +60,21 @@ function Board({ xIsNext, squares, onPlay }) { // added the properties the funct
   )
 }
 export default function Game() {
-  const [xIsNext, setXIsNext] = useState(true) // initialized xIsNext as true
+
   const [history, setHistory] = useState([Array(9).fill(null)]) // Operates similar to our previous initalization of squares with an array of 9 filled with nulls but with this its an array of 9 nested in an array
   const [currentMove, setCurrentMove] = useState(0)
+  const xIsNext = currentMove % 2 === 0
   const currentSquares = history[currentMove] // current or currently selected move will be displayed
 
 
   function handleplay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares] // copies the history up to a current point in case a person makes a new move after backtracking
     setHistory(nextHistory)
-    setCurrentMove = (nextHistory.length - 1)
-    setXIsNext(!xIsNext) // boolean to determine turns
+    setCurrentMove(nextHistory.length - 1)
   }
 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove)
-    setXIsNext(nextMove % 2 === 0)
   }
 
   const moves = history.map((squares, move) => {
