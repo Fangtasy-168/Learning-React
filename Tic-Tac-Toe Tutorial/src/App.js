@@ -25,7 +25,6 @@ function Board({ xIsNext, squares, onPlay }) { // added the properties the funct
 
     onPlay(nextSquares)
   }
-
   // Function to declare current turn of the game or winner if game ended
   const winner = calculateWinner(squares) // refer to the function to see the value it returns (should be "X" or "O")
   let status
@@ -35,27 +34,29 @@ function Board({ xIsNext, squares, onPlay }) { // added the properties the funct
     status = "Next player: " + (xIsNext ? "X" : "O")
   }
 
-
-  /* passing the squares state as a prop down to the component so it knows what to render. Also passing the function handleClick as a props */
+  const boardSize = 3
+  function renderSquares() {
+    let layout = []
+    // Outer loop to define the rows
+    for (let row = 0; row < boardSize; row++) {
+      const rows = []
+      // Inner loop to define the squares in the row
+      for (let col = 0; col < boardSize; col++) {
+        let squareIndex = row * boardSize + col
+        rows.push(<Square key={squareIndex + "-square"} value={squares[squareIndex]} onSquareClick={() => handleClick(squareIndex)} />)
+      }
+      layout.push(
+        <div key={row + "-row"} className='board-row'>
+          {rows}
+        </div>
+      )
+    }
+    return layout
+  }
   return (
     <>
-      <div className="status">{status}</div>
-      <div className='board-row'>
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
-
-      </div>
-      <div className='board-row'>
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
-      </div>
-      <div className='board-row'>
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
-      </div>
+      <div className='status'>{status}</div>
+      <div>{renderSquares()}</div>
     </>
   )
 }
@@ -79,14 +80,21 @@ export default function Game() {
 
   const moves = history.map((squares, move) => {
     let description
-    if (move > 0) {
+    let syntax
+    if (move > 0 && move < history.length - 1) {
       description = 'Go to move #' + move
-    } else {
+      syntax = <button onClick={() => jumpTo(move)}>{description}</button>
+    } else if (move > 0 && move == history.length - 1) {
+      description = 'You are at move #' + move
+      syntax = <p>{description}</p>
+    }
+    else {
       description = 'Go to game start'
+      syntax = <button onClick={() => jumpTo(move)}>{description}</button>
     }
     return (
       <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+        {syntax}
       </li>
     )
   })
