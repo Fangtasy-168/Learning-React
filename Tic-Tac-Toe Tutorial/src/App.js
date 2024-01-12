@@ -60,6 +60,34 @@ function Board({ xIsNext, squares, onPlay }) { // added the properties the funct
     </>
   )
 }
+function Info({ history, onJump }) {
+  let turn = history.length
+  console.log(turn)
+  const moves = history.map((squares, move) => {
+    let description
+    let syntax
+    if (move > 0) {
+      description = 'Go to move #' + move
+      syntax = <button onClick={() => onJump(move)}>{description}</button>
+    }
+    else {
+      description = 'Go to game start'
+      syntax = <button onClick={() => onJump(move)}>{description}</button>
+    }
+    return (
+      <li key={move}>
+        {syntax}
+      </li>
+    )
+  })
+
+  return (
+    <>
+      <p>{'You are at move #' + turn}</p>
+      <ol>{moves}</ol>
+    </>
+  )
+}
 export default function Game() {
 
   const [history, setHistory] = useState([Array(9).fill(null)]) // Operates similar to our previous initalization of squares with an array of 9 filled with nulls but with this its an array of 9 nested in an array
@@ -78,26 +106,6 @@ export default function Game() {
     setCurrentMove(nextMove)
   }
 
-  const moves = history.map((squares, move) => {
-    let description
-    let syntax
-    if (move > 0 && move < history.length - 1) {
-      description = 'Go to move #' + move
-      syntax = <button onClick={() => jumpTo(move)}>{description}</button>
-    } else if (move > 0 && move == history.length - 1) {
-      description = 'You are at move #' + move
-      syntax = <p>{description}</p>
-    }
-    else {
-      description = 'Go to game start'
-      syntax = <button onClick={() => jumpTo(move)}>{description}</button>
-    }
-    return (
-      <li key={move}>
-        {syntax}
-      </li>
-    )
-  })
 
   return (
     <div className="game">
@@ -105,7 +113,7 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handleplay} />
       </div>
       <div className="game-info">
-        <ol>{moves}</ol>
+        <Info history={history} onJump={jumpTo} />
       </div>
     </div>
   )
