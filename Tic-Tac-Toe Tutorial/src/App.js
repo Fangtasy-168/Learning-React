@@ -60,9 +60,9 @@ function Board({ xIsNext, squares, onPlay }) { // added the properties the funct
     </>
   )
 }
-function Info({ history, onJump }) {
+function Info({ history, onJump, ascend, sort }) {
+
   let turn = history.length
-  console.log(turn)
   const moves = history.map((squares, move) => {
     let description
     let syntax
@@ -80,11 +80,13 @@ function Info({ history, onJump }) {
       </li>
     )
   })
+  let sorted = ascend ? moves : moves.reverse()
 
   return (
     <>
       <p>{'You are at move #' + turn}</p>
-      <ol>{moves}</ol>
+      <button onClick={sort}>Sorting</button>
+      <ol>{sorted}</ol>
     </>
   )
 }
@@ -94,6 +96,7 @@ export default function Game() {
   const [currentMove, setCurrentMove] = useState(0)
   const xIsNext = currentMove % 2 === 0
   const currentSquares = history[currentMove] // current or currently selected move will be displayed
+  const [ascending, setAscending] = useState(true)
 
 
   function handleplay(nextSquares) {
@@ -106,6 +109,10 @@ export default function Game() {
     setCurrentMove(nextMove)
   }
 
+  function sorting() {
+    setAscending(!ascending)
+  }
+
 
   return (
     <div className="game">
@@ -113,7 +120,7 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handleplay} />
       </div>
       <div className="game-info">
-        <Info history={history} onJump={jumpTo} />
+        <Info history={history} onJump={jumpTo} ascend={ascending} sort={sorting} />
       </div>
     </div>
   )
