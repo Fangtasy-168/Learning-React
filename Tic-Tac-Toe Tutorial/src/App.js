@@ -2,11 +2,13 @@ import React from "react"
 import { useState } from "react"
 
 // Component that creates a square allowing us to reuse as many times as needed in our code below
-function Square({ value, onSquareClick }) {
+function Square({ value, onSquareClick, color }) {
   return (
     <button
       className="square"
-      onClick={onSquareClick}>
+      onClick={onSquareClick}
+      style={{ background: color }}
+    >
       {value}
     </button>
   )
@@ -25,16 +27,21 @@ function Board({ xIsNext, squares, onPlay }) { // added the properties the funct
 
     onPlay(nextSquares)
   }
+
   // Function to declare current turn of the game or winner if game ended
-  const winner = calculateWinner(squares) // refer to the function to see the value it returns (should be "X" or "O")
+  const winner = calculateWinner(squares) // refer to the function to see the value it returns (should be "X" or "O") and now also returns the squares that are the winning line  
+
   let status
+  let color
   if (winner) {
-    status = "Winner: " + winner
+    status = "Winner: " + winner.winner
+    color = "yellow"
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O")
   }
 
   const boardSize = 3
+
   function renderSquares() {
     let layout = []
     // Outer loop to define the rows
@@ -43,7 +50,7 @@ function Board({ xIsNext, squares, onPlay }) { // added the properties the funct
       // Inner loop to define the squares in the row
       for (let col = 0; col < boardSize; col++) {
         let squareIndex = row * boardSize + col
-        rows.push(<Square key={squareIndex + "-square"} value={squares[squareIndex]} onSquareClick={() => handleClick(squareIndex)} />)
+        rows.push(<Square key={squareIndex} value={squares[squareIndex]} color={winner && winner.line.includes(squareIndex) ? color : ""} onSquareClick={() => handleClick(squareIndex)} />)
       }
       layout.push(
         <div key={row + "-row"} className='board-row'>
@@ -141,7 +148,11 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i]
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) { // Check if first box is a value, then checks if the following boxes indicated by the index is of the same value
-      return squares[a]
+      let win = {
+        winner: squares[a],
+        line: lines[i]
+      }
+      return win
     }
 
   }
