@@ -1,0 +1,20 @@
+
+body {
+    width: 50vw;
+    height: 75vh;
+    margin: 0 auto;
+}
+#root{
+    display: flex;
+    flex-direction: column;
+}
+
+tr {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+}
+
+.category{
+    margin: 0 auto;
+}
